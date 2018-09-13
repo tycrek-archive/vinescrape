@@ -25,7 +25,10 @@ def scrapeURL(url):
 		try:
 			# Run Selenium with Firefox (geckodriver.exe)
 			driver = webdriver.Firefox(firefox_options=options)
-			
+
+			# Set the driver timeout
+			driver.set_page_load_timeout(5)
+
 			driver.get(url)                           # Download the page with Selenium
 			page = driver.find_element_by_id("json")  # Extract the JSON element
 			data = json.loads(page.text)              # Parse our JSON data
