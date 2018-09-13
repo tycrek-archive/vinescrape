@@ -16,6 +16,16 @@ import time
 import json
 import youtube_dl
 import subprocess
+import odrest as rest
+
+# Read credentials
+authf = open('auth.txt', 'r')
+auth = []
+for line in authf.readlines():
+	auth.append(line.rstrip("\n\r"))
+USERNAME = auth[0]
+PASSWORD = auth[1]
+authf.close()
 
 # Use Selenium to scrape the Vine archive JSON file for a given ID
 # Param: url: the URL to scrape
@@ -49,7 +59,6 @@ def scrapeURL(url):
 			print(e)
 			print("Failed, retrying! Try " + str(i))
 	print("! Full failure!")
-
 
 options = Options()                 # Option set for running Selenium
 options.set_headless(headless=True) # Run in background
@@ -126,9 +135,17 @@ for file in files:
 		# Use rclone to upload the .mp4 and .json files to OpenDrive
 		try:
 			# Use Python subprocess to run a system command
-			subprocess.run(['rclone move archive/videos/' + linkid + '.mp4 remote:VINE_REBORN/archive/videos/'],shell=True)
-			subprocess.run(['rclone move archive/' + linkid + '.json remote:VINE_REBORN/archive/'],shell=True)			
-			
+			subprocess.run('rclone.exe move archive/videos/' + linkid + '.mp4 remote:VINE_REBORN/archive/videos/',shell=True)
+			subprocess.run('rclone.exe move archive/' + linkid + '.json remote:VINE_REBORN/archive/',shell=True)			
+			vfileid = str(subprocess.check_output('rclone.exe lsf --format "i" remote:VINE_REBORN/archive/videos/' + linkid + '.mp4',shell=True).decode('utf-8')).rstrip('\n').replace('\'', '')
+			ifileid = str(subprocess.check_output('rclone.exe lsf --format "i" remote:VINE_REBORN/archive/' + linkid + '.json',shell=True).decode('utf-8')).rstrip('\n').replace('\'', '')
+
+			print("File ID's: video={} ; info={}".format(vfileid, ifileid))
+
+			SESSION_ID = rest.login(USERNAME, PASSWORD).json()['SessionID']
+			print(rest.set_file_permission_public(SESSION_ID, vfileid))
+			print(rest.set_file_permission_public(SESSION_ID, ifileid))
+
 			print("Link " + linkid + " uploaded")
 		except Exception as e:
 			print(e)
