@@ -2,3 +2,5 @@
 *.json
 geckodriver.log
 scraped/*
+auth.txt
+__pycache__
