@@ -17,6 +17,8 @@ Cool. Download [these archives](https://vine.inkdroid.org/archive/) and extract 
 
 Run the script with Python in your terminal. **It will take a very long time**. It will also *destroy* your Internet data plan, so make sure you have an unlimited data plan before running for good! Also, the largest links file contains around 61 GB of Vines, so make sure you have at least that much free space (you don't need terabytes upon terebytes because after each link file is downloaded, it moves the videos to OpenDrive and deletes them from your disk. To keep the videos, change `move` to `copy` in the rclone command).
 
+Make sure to remove everything from `scraped/_ydl.txt` to make sure you actually download stuff.
+
 ## Credits and thanks
 
 - Jason Huggins (Creator of Selenium)
