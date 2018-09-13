@@ -119,10 +119,23 @@ for file in files:
 			print("Link " + linkid + " scraped")
 		except:
 			print("! Failed to scrape " + linkid + "!")
+
+		# Upload to OpenDrive
+		print("\nUploading " + linkid + " (" + str(linkcount) + " of " + str(len(links)) + ")...")
+		
+		# Use rclone to upload the .mp4 and .json files to OpenDrive
+		try:
+			# Use Python subprocess to run a system command
+			subprocess.run(['rclone move archive/videos/' + linkid + '.mp4 remote:VINE_REBORN/archive/videos/'],shell=True)
+			subprocess.run(['rclone move archive/' + linkid + '.json remote:VINE_REBORN/archive/'],shell=True)			
+			
+			print("Link " + linkid + " uploaded")
+		except Exception as e:
+			print(e)
 		linkcount += 1
 
 
-	print("\n\n! ! ! UPLOADING ! ! !")
+	'''print("\n\n! ! ! UPLOADING ! ! !")
 
 	linkcount = 0
 	## Upload all from current file to OpenDrive
@@ -143,7 +156,7 @@ for file in files:
 			print("Link " + linkid + " uploaded")
 		except Exception as e:
 			print(e)
-		linkcount += 1
+		linkcount += 1'''
 
 	filecount += 1
 
