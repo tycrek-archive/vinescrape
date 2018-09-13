@@ -7,7 +7,7 @@ I wanted to download all Vines that are currently on the Vine website because th
 
 This script only gets Vines that are still public. I got the list of links from [this web index](https://vine.inkdroid.org/archive/). The archive contains over 127 million links, which I have estimated to total around 122 terabytes. I am uploading them to my unlimited [OpenDrive](http://opendrive.com/).
 
-This is primarily more of a personal project, so I'm not really going to be providing support for setting up the script. If you can figure it out on your own, try it!
+This is primarily more of a personal project, so I'm not really going to be providing support for setting up the script. If you can figure it out on your own, try it! I did however provide basic steps below.
 
 ## I want to try it!
 
