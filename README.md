@@ -1,6 +1,8 @@
 # vinescrape
 A python script to download all of Vines currently public videos (WIP)
 
+# Note: I do not have every Vine downloaded yet. It is still in progress. I will update this repo when they have been downloaded.
+
 ## Intro
 
 I wanted to download all Vines that are currently on the Vine website because the so-called Archive isn't actually functioning.
