@@ -128,6 +128,7 @@ for file in files:
 			print("Link " + linkid + " scraped")
 		except:
 			print("! Failed to scrape " + linkid + "!")
+			continue
 
 		# Upload to OpenDrive
 		print("\nUploading " + linkid + " (" + str(linkcount) + " of " + str(len(links)) + ")...")
