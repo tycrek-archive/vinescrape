@@ -23,6 +23,9 @@ import subprocess
 def scrapeURL(url):
 	for i in range(5):
 		try:
+			# Run Selenium with Firefox (geckodriver.exe)
+			driver = webdriver.Firefox(firefox_options=options)
+			
 			driver.get(url)                           # Download the page with Selenium
 			page = driver.find_element_by_id("json")  # Extract the JSON element
 			data = json.loads(page.text)              # Parse our JSON data
@@ -48,7 +51,6 @@ def scrapeURL(url):
 options = Options()                 # Option set for running Selenium
 options.set_headless(headless=True) # Run in background
 
-driver = webdriver.Firefox(firefox_options=options) # Run Selenium with Firefox (geckodriver.exe)
 
 
 filelist = open('filelist.txt', 'r+') # The list of files containing links
