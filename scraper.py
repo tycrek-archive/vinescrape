@@ -2,21 +2,17 @@
 ##  Python 3
 ##  Special thanks to Ed Summers (https://github.com/edsu) for the link archive
 ## Credits:
-##  Jason Huggins 				(Creator of Selenium)
 ##  Ricardo Garcia Gonzalez 	(Creator of youtube-dl)
-##  Mozilla Foundation			(for geckodriver.exe)
 ##  Nick Craig-Wood				(Creator of rclone)
 ##  Everyone at StackOverflow
 
-from selenium import webdriver
-from selenium.webdriver.firefox.options import Options
-from selenium.webdriver.common.by import By
 import os.path
 import time
 import json
 import youtube_dl
 import subprocess
 import odrest as rest
+import urllib.request
 
 # Read credentials
 authf = open('auth.txt', 'r')
@@ -27,21 +23,14 @@ USERNAME = auth[0]
 PASSWORD = auth[1]
 authf.close()
 
-# Use Selenium to scrape the Vine archive JSON file for a given ID
+# Scrape the Vine archive JSON file for a given ID
 # Param: url: the URL to scrape
 # It attempts a scrape 5 times before moving on
 def scrapeURL(url):
 	for i in range(5):
 		try:
-			# Run Selenium with Firefox (geckodriver.exe)
-			driver = webdriver.Firefox(firefox_options=options)
-
-			# Set the driver timeout
-			driver.set_page_load_timeout(5)
-
-			driver.get(url)                           # Download the page with Selenium
-			page = driver.find_element_by_id("json")  # Extract the JSON element
-			data = json.loads(page.text)              # Parse our JSON data
+			url = urllib.request.urlopen(url)
+			data = json.loads(url.read().decode())              # Parse our JSON data
 			videoURL = data['videoUrl'].split("?")[0] # Extract the video URL and remove "version"
 			info = dict()                             # Metadata storage
 			info['username']    = data['username']
@@ -52,17 +41,14 @@ def scrapeURL(url):
 			info['loops']       = data['loops']
 
 			# Close the current browser session
-			driver.close()
+			#driver.close()
 
 			return videoURL, info
 		except Exception as e:
 			print(e)
 			print("Failed, retrying! Try " + str(i))
+			time.sleep(3)
 	print("! Full failure!")
-
-options = Options()                 # Option set for running Selenium
-options.set_headless(headless=True) # Run in background
-
 
 
 filelist = open('filelist.txt', 'r+') # The list of files containing links
@@ -116,7 +102,7 @@ for file in files:
 			# Attempt to download the video and save it
 			with youtube_dl.YoutubeDL(ydl_opts) as ydl:
 				ydl.download([vineVideo])
-
+			
 			# Write the metadata to a JSON file
 			with open("archive/" + linkid + ".json", 'w') as outfile:
 				json.dump(vineInfo, outfile, indent=4, sort_keys=True)
@@ -151,30 +137,7 @@ for file in files:
 		except Exception as e:
 			print(e)
 		linkcount += 1
-
-
-	'''print("\n\n! ! ! UPLOADING ! ! !")
-
-	linkcount = 0
-	## Upload all from current file to OpenDrive
-	## (I am aware there are two  link in links  loops,
-	##  this is intentional.)
-	for link in links:
-		# Extract the ID from the URL
-		linkid = link.split("/")[-1].replace(".json", "")
-
-		print("\nUploading " + linkid + " (" + str(linkcount) + " of " + str(len(links)) + ")...")
-		
-		# Use rclone to upload the .mp4 and .json files to OpenDrive
-		try:
-			# Use Python subprocess to run a system command
-			subprocess.run(['rclone move archive/videos/' + linkid + '.mp4 remote:VINE_REBORN/archive/videos/'],shell=True)
-			subprocess.run(['rclone move archive/' + linkid + '.json remote:VINE_REBORN/archive/'],shell=True)			
-			
-			print("Link " + linkid + " uploaded")
-		except Exception as e:
-			print(e)
-		linkcount += 1'''
+	
 
 	filecount += 1
 

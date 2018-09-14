@@ -13,7 +13,7 @@ This is primarily more of a personal project, so I'm not really going to be prov
 
 ## I want to try it!
 
-Cool. Download [these archives](https://vine.inkdroid.org/archive/) and extract them. In `filelist.txt`, replace my path with wherever you have them saved (Sublime Text is good at doing replacing lots of stuff). Use Python 3 and install `youtube_dl` and `selenium` with `pip install`. I have provided `geckodriver.exe` and `rclone.exe`. Read the [rclone docs](https://rclone.org/) to figure out how to set it up. In the script, change where rclone points to on the remote server.
+Cool. Download [these archives](https://vine.inkdroid.org/archive/) and extract them. In `filelist.txt`, replace my path with wherever you have them saved (Sublime Text is good at doing replacing lots of stuff). Use Python 3 and install `youtube_dl` with `pip install`. I have provided `rclone.exe`. Read the [rclone docs](https://rclone.org/) to figure out how to set it up. In the script, change where rclone points to on the remote server.
 
 Run the script with Python in your terminal. **It will take a very long time**. It will also *destroy* your Internet data plan, so make sure you have an unlimited data plan before running for good! Also, the largest links file contains around 61 GB of Vines, so make sure you have at least that much free space (you don't need terabytes upon terebytes because after each link file is downloaded, it moves the videos to OpenDrive and deletes them from your disk. To keep the videos, change `move` to `copy` in the rclone command).
 
@@ -21,9 +21,7 @@ Make sure to remove everything from `scraped/_ydl.txt` to make sure you actually
 
 ## Credits and thanks
 
-- Jason Huggins (Creator of Selenium)
 - Ricardo Garcia Gonzalez (Creator of youtube-dl)
-- Mozilla Foundation (for geckodriver.exe)
 - Nick Craig-Wood (Creator of rclone)
 - Everyone at StackOverflow
 
