@@ -47,7 +47,7 @@ def scrapeURL(url):
 		except Exception as e:
 			print(e)
 			print("Failed, retrying! Try " + str(i))
-			time.sleep(3)
+			#time.sleep(3)
 	print("! Full failure!")
 
 
@@ -77,13 +77,14 @@ for file in files:
 
 	linkcount = 0 # Keep track of which link we are on
 	for link in links:
+		linkcount += 1
 		# Extract the link ID from the URL
 		linkid = link.split("/")[-1].replace(".json", "")
 
 		print("\nScraping " + linkid + " (" + str(linkcount) + " of " + str(len(links)) + ")...")
 		
 		# Check to see if the link has already been scraped
-		if os.path.isfile(linkid):
+		if os.path.isfile('scraped/' + linkid):
 			print("! Link already scraped, skipping!")
 			continue
 
@@ -108,24 +109,24 @@ for file in files:
 				json.dump(vineInfo, outfile, indent=4, sort_keys=True)
 
 			# Place an indicator file in scraped so we know to not download again
-			f = open("scraped/" + linkid, "w+")
-			f.close()
+			#f = open("scraped/" + linkid, "w+")
+			#f.close()
 
 			print("Link " + linkid + " scraped")
-		except:
-			print("! Failed to scrape " + linkid + "!")
-			continue
+		#except:
+			#print("! Failed to scrape " + linkid + "!")
+			#continue
 
-		# Upload to OpenDrive
-		print("\nUploading " + linkid + " (" + str(linkcount) + " of " + str(len(links)) + ")...")
+			# Upload to OpenDrive
+			print("\nUploading " + linkid + " (" + str(linkcount) + " of " + str(len(links)) + ")...")
 		
-		# Use rclone to upload the .mp4 and .json files to OpenDrive
-		try:
+			# Use rclone to upload the .mp4 and .json files to OpenDrive
+		#try:
 			# Use Python subprocess to run a system command
-			subprocess.run('rclone.exe move archive/videos/' + linkid + '.mp4 remote:VINE_REBORN/archive/videos/',shell=True)
-			subprocess.run('rclone.exe move archive/' + linkid + '.json remote:VINE_REBORN/archive/',shell=True)			
-			vfileid = str(subprocess.check_output('rclone.exe lsf --format "i" remote:VINE_REBORN/archive/videos/' + linkid + '.mp4',shell=True).decode('utf-8')).rstrip('\n').replace('\'', '')
-			ifileid = str(subprocess.check_output('rclone.exe lsf --format "i" remote:VINE_REBORN/archive/' + linkid + '.json',shell=True).decode('utf-8')).rstrip('\n').replace('\'', '')
+			subprocess.run('rclone move archive/videos/' + linkid + '.mp4 remote:VINE_REBORN/archive/videos/',shell=True)
+			subprocess.run('rclone move archive/' + linkid + '.json remote:VINE_REBORN/archive/',shell=True)			
+			vfileid = str(subprocess.check_output('rclone lsf --format "i" remote:VINE_REBORN/archive/videos/' + linkid + '.mp4',shell=True).decode('utf-8')).rstrip('\n').replace('\'', '')
+			ifileid = str(subprocess.check_output('rclone lsf --format "i" remote:VINE_REBORN/archive/' + linkid + '.json',shell=True).decode('utf-8')).rstrip('\n').replace('\'', '')
 
 			print("File ID's: video={} ; info={}".format(vfileid, ifileid))
 
@@ -134,13 +135,21 @@ for file in files:
 			print(rest.set_file_permission_public(SESSION_ID, ifileid))
 
 			print("Link " + linkid + " uploaded")
+			# Place an indicator file in scraped so we know to not download again
+            f = open("scraped/" + linkid, "w+")
+            f.close()
 		except Exception as e:
+			print('Failed to scrape ' + linkid + '!')
 			print(e)
-		linkcount += 1
+		#linkcount += 1
 	
 
+	curfile = open("curfile.txt", "w")
+	curfile.write(str(filecount))
+	curfile.close()
+	
 	filecount += 1
 
-driver.quit() # Close out all Selenium processes
+#driver.quit() # Close out all Selenium processes
 
 print("\n\nProcess complete. Vine has been saved!")
