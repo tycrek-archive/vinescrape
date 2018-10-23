@@ -7,6 +7,7 @@
 ##  Everyone at StackOverflow
 
 import os.path
+import os.exit
 import time
 import json
 import youtube_dl
@@ -40,14 +41,10 @@ def scrapeURL(url):
 			info['reposts']     = data['reposts']
 			info['loops']       = data['loops']
 
-			# Close the current browser session
-			#driver.close()
-
 			return videoURL, info
 		except Exception as e:
 			print(e)
 			print("Failed, retrying! Try " + str(i))
-			#time.sleep(3)
 	print("! Full failure!")
 
 
@@ -56,6 +53,9 @@ files = filelist.readlines()
 filelist.close()
 
 filecount = 0 # Keep track of which file we are on
+
+
+# MAGIC!
 for file in files:
 	print("* File " + str(filecount) + " of " + str(len(files)))
 
@@ -123,10 +123,10 @@ for file in files:
 			# Use rclone to upload the .mp4 and .json files to OpenDrive
 		#try:
 			# Use Python subprocess to run a system command
-			subprocess.run('rclone move archive/videos/' + linkid + '.mp4 remote:VINE_REBORN/archive/videos/',shell=True)
-			subprocess.run('rclone move archive/' + linkid + '.json remote:VINE_REBORN/archive/',shell=True)			
-			vfileid = str(subprocess.check_output('rclone lsf --format "i" remote:VINE_REBORN/archive/videos/' + linkid + '.mp4',shell=True).decode('utf-8')).rstrip('\n').replace('\'', '')
-			ifileid = str(subprocess.check_output('rclone lsf --format "i" remote:VINE_REBORN/archive/' + linkid + '.json',shell=True).decode('utf-8')).rstrip('\n').replace('\'', '')
+			subprocess.run('rclone move archive/videos/' + linkid +  '.mp4 remote:VINE_REBORN/archive2/videos/', shell=True, check=True)
+			subprocess.run('rclone move archive/'        + linkid + '.json remote:VINE_REBORN/archive2/',        shell=True, check=True)			
+			vfileid = str(subprocess.check_output('rclone lsf --format "i" remote:VINE_REBORN/archive2/videos/' + linkid + '.mp4',  shell=True).decode('utf-8')).rstrip('\n').replace('\'', '')
+			ifileid = str(subprocess.check_output('rclone lsf --format "i" remote:VINE_REBORN/archive2/'        + linkid + '.json', shell=True).decode('utf-8')).rstrip('\n').replace('\'', '')
 
 			print("File ID's: video={} ; info={}".format(vfileid, ifileid))
 
@@ -135,21 +135,23 @@ for file in files:
 			print(rest.set_file_permission_public(SESSION_ID, ifileid))
 
 			print("Link " + linkid + " uploaded")
+
 			# Place an indicator file in scraped so we know to not download again
             f = open("scraped/" + linkid, "w+")
             f.close()
+        except subprocess.CalledProcessError as e:
+        	print('Subprocess failed to run command!')
+        	if '25000 files (Error 403)' in e.output:
+        		print('Too many files in target! Quitting!')
+        		os.exit(1)
 		except Exception as e:
 			print('Failed to scrape ' + linkid + '!')
 			print(e)
-		#linkcount += 1
 	
-
 	curfile = open("curfile.txt", "w")
 	curfile.write(str(filecount))
 	curfile.close()
 	
 	filecount += 1
-
-#driver.quit() # Close out all Selenium processes
 
 print("\n\nProcess complete. Vine has been saved!")
