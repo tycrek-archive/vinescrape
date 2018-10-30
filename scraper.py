@@ -7,7 +7,8 @@
 ##  Everyone at StackOverflow
 
 import os.path
-import os.exit
+import sys
+import re
 import time
 import json
 import youtube_dl
@@ -67,7 +68,7 @@ for file in files:
 	with open(file, 'r+') as f:
 		for line in f.readlines():
 			# Clean up the link to only get the ID
-			link = line.split(" ")[1].rstrip("\n\r").replace("/card?api=1", "").split("/")[-1]
+			link = re.sub("\/card?(.*)", "", line.split(" ")[1].rstrip("\n\r")).split("/")[-1]
 			
 			# Add the JSON link to links[]
 			links.append("https://archive.vine.co/posts/" + link + ".json")
@@ -123,27 +124,27 @@ for file in files:
 			# Use rclone to upload the .mp4 and .json files to OpenDrive
 		#try:
 			# Use Python subprocess to run a system command
-			subprocess.run('rclone move archive/videos/' + linkid +  '.mp4 remote:VINE_REBORN/archive2/videos/', shell=True, check=True)
-			subprocess.run('rclone move archive/'        + linkid + '.json remote:VINE_REBORN/archive2/',        shell=True, check=True)			
-			vfileid = str(subprocess.check_output('rclone lsf --format "i" remote:VINE_REBORN/archive2/videos/' + linkid + '.mp4',  shell=True).decode('utf-8')).rstrip('\n').replace('\'', '')
-			ifileid = str(subprocess.check_output('rclone lsf --format "i" remote:VINE_REBORN/archive2/'        + linkid + '.json', shell=True).decode('utf-8')).rstrip('\n').replace('\'', '')
+			subprocess.run('rclone move archive/videos/' + linkid +  '.mp4 jtns3:vinesaver/VINE_REBORN/archive/videos/', shell=True, check=True)
+			subprocess.run('rclone move archive/'        + linkid + '.json jtns3:vinesaver/VINE_REBORN/archive/',        shell=True, check=True)			
+			#vfileid = str(subprocess.check_output('rclone lsf --format "i" remote:VINE_REBORN/archive2/videos/' + linkid + '.mp4',  shell=True).decode('utf-8')).rstrip('\n').replace('\'', '')
+			#ifileid = str(subprocess.check_output('rclone lsf --format "i" remote:VINE_REBORN/archive2/'        + linkid + '.json', shell=True).decode('utf-8')).rstrip('\n').replace('\'', '')
 
-			print("File ID's: video={} ; info={}".format(vfileid, ifileid))
+			#print("File ID's: video={} ; info={}".format(vfileid, ifileid))
 
-			SESSION_ID = rest.login(USERNAME, PASSWORD).json()['SessionID']
-			print(rest.set_file_permission_public(SESSION_ID, vfileid))
-			print(rest.set_file_permission_public(SESSION_ID, ifileid))
+			#SESSION_ID = rest.login(USERNAME, PASSWORD).json()['SessionID']
+			#print(rest.set_file_permission_public(SESSION_ID, vfileid))
+			#print(rest.set_file_permission_public(SESSION_ID, ifileid))
 
 			print("Link " + linkid + " uploaded")
 
 			# Place an indicator file in scraped so we know to not download again
-            f = open("scraped/" + linkid, "w+")
-            f.close()
-        except subprocess.CalledProcessError as e:
-        	print('Subprocess failed to run command!')
-        	if '25000 files (Error 403)' in e.output:
-        		print('Too many files in target! Quitting!')
-        		os.exit(1)
+			f = open("scraped/" + linkid, "w+")
+			f.close()
+		except subprocess.CalledProcessError as e:
+			print('Subprocess failed to run command!')
+			if '25000 files (Error 403)' in e.output:
+				print('Too many files in target! Quitting!')
+				sys.exit(1)
 		except Exception as e:
 			print('Failed to scrape ' + linkid + '!')
 			print(e)
