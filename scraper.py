@@ -57,18 +57,21 @@ filecount = 0 # Keep track of which file we are on
 
 
 # MAGIC!
-for file in files:
-	print("* File " + str(filecount) + " of " + str(len(files)))
+#for file in files:
+def main():
+	#print("* File " + str(filecount) + " of " + str(len(files)))
 
-	file = file.rstrip("\n") # Remove trailing newlines from the filename
+	#file = file.rstrip("\n") # Remove trailing newlines from the filename
 
 	links = [] # Store the links here
 
 	# Read the file and add the links to links[]
-	with open(file, 'r+') as f:
+	with open('links.txt', 'r+') as f:
 		for line in f.readlines():
 			# Clean up the link to only get the ID
-			link = re.sub("\/card?(.*)", "", line.split(" ")[1].rstrip("\n\r")).split("/")[-1]
+			#link = re.sub("\/card?(.*)", "", line.split(" ")[1].rstrip("\n\r")).split("/")[-1]
+			#link = line[37:37+11]
+			link = line.rstrip("\n\r")
 			
 			# Add the JSON link to links[]
 			links.append("https://archive.vine.co/posts/" + link + ".json")
@@ -149,10 +152,10 @@ for file in files:
 			print('Failed to scrape ' + linkid + '!')
 			print(e)
 	
-	curfile = open("curfile.txt", "w")
-	curfile.write(str(filecount))
-	curfile.close()
+	#curfile = open("curfile.txt", "w")
+	#curfile.write(str(filecount))
+	#curfile.close()
 	
-	filecount += 1
-
+	#filecount += 1
+main()
 print("\n\nProcess complete. Vine has been saved!")
