@@ -82,6 +82,9 @@ def main():
 	linkcount = 0 # Keep track of which link we are on
 	for link in links:
 		linkcount += 1
+		skipto = 1680934
+		if linkcount < skipto:
+			continue
 		# Extract the link ID from the URL
 		linkid = link.split("/")[-1].replace(".json", "")
 
