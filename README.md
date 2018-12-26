@@ -1,3 +1,6 @@
+##2018/12/26 UPDATE: Project on hold!
+This project is costing me around $55 CAD per month to run. Amazon storage is not cheap! Due to this, the scraping is being put on hold until I can find a cheaper alternative.
+
 # vinescrape
 A python script to download all of Vines currently public videos (WIP)
 
